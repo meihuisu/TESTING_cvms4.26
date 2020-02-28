@@ -1,0 +1,12 @@
+
+ASCII slice data from EnJui's directory on intensity
+
+[maechlin@intensity scec-01]$ cd enjuilee/work
+[maechlin@intensity work]$ ls
+CCA_ASCII  CVM4SI26_ascii  CVM4SI26_bin  CVM4SI26_bin2  LARSE_1A  SAC_test
+[maechlin@intensity work]$ cd CVM4SI26_ascii
+[maechlin@intensity CVM4SI26_ascii]$ pwd
+/home/scec-01/enjuilee/work/CVM4SI26_ascii
+
+
+--> on hypocenter.. cvms426_ascii_slices.tar.gz

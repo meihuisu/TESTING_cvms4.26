@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+ <title>CVM-S4.26(cvms5) Depth Profile Plots</title>
+<script type='text/javascript' src='js/plotly.min.js'></script>
+<link href="css/jquery-ui.css" rel="stylesheet">
+<link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="css/bootstrap-grid.min.css">
+<link rel="stylesheet" href="css/glyphicons.css">
+
+
+<script type='text/javascript' src='js/jquery.js'></script>
+<script type='text/javascript' src='js/jquery-ui.js'></script>
+<script type='text/javascript' src='js/jquery.csv.js'></script>
+<script type='text/javascript' src='js/bootstrap.min.js'></script>
+<script type='text/javascript' src='js/popper.min.js'></script>
+
+<script type='text/javascript' src='js/viewer-plotly.js'></script>
+<script type='text/javascript' src='js/viewer.js'></script>
+<script type='text/javascript' src='js/viewer-util.js'></script>
+<style>
+
+.ucvm-small-btn {
+          background: transparent;
+          padding: 2px 2px;
+          font-size: 6px;
+          display: inline-block;
+
+          -webkit-box-shadow: none !important;
+          box-shadow: none !important;
+          border: none !important;
+          }
+
+.ucvm-small-btn:hover {
+          color: red;
+          display: inline-block;
+          }
+</style>
+
+</head>
+<body>
+<div class="col-6" align="center" style="margin-top:2vw">
+  <select id="dataGroup">
+    <option value='Santa_Maria_Basin'>Santa_Maria_Basin</option>
+    <option value='Tehachapi_Mountains'>Tehachapi_Mountains</option>
+    <option value='Great_Valley'>Great_Valley</option>
+    <option value='Ophiolitic_Terranes'>Ophiolitic_Terranes</option>
+    <option value='Sierra_Nevada_Batholith'>Sierra_Nevada_Batholith</option>
+    <option value='Continental_Borderland'>Continental_Borderland</option>
+    <option value='Ventura_Basin'>Ventura_Basin</option>
+    <option value='Los_Angeles_Basin'>Los_Angeles_Basin</option>
+    <option value='W_Mojave'>W_Mojave</option>
+    <option value='China_Lake_Basin'>China_Lake_Basin</option>
+    <option value='Eastern_California_Shear_Zone'>Eastern_California_Shear_Zone</option>
+    <option value='E_Mojave'>E_Mojave</option>
+    <option value='Peninsular_Range_Batholith'>Peninsular_Range_Batholith</option>
+    <option value='Salton_Trough'>Salton_Trough</option>
+    <option value='Proterozoic_Terranes'>Proterozoic_Terranes</option>
+  </select>
+  <select id="dataType" style="margin-left:1vw">
+    <option value='vs'>vs</option>
+    <option value='vp'>vp</option>
+  </select>
+  <button onclick="refreshPlot()" class="btn ucvm-small-btn" type="button" style="margin-left:1vw;background: #cce3f8;border:2px solid black" >Plot it!</button>
+
+  <button class="btn ucvm-small-btn" data-toggle="modal" data-target="#modalinfo" style="margin-left:1vw">
+     <span class="glyphicon glyphicon-info-sign"></span>
+ </button>
+
+</div>
+<div id="myDiv" style="display:inline;" ></div>
+
+<!--Modal: Modelinfo -->
+<div class="modal" id="modalinfo" tabindex="-1" style="z-index:9999" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" id="modalinfoDialog" role="document">
+
+    <!--Content-->
+    <div class="modal-content" id="modalinfoContent">
+      <!--Body-->
+      <div class="modal-body" id="modalinfoBody">
+        <div class="row col-md-12 ml-auto" style="overflow:hidden;">
+
+          <div class="col-12" id="info-container">
+<p>
+ Comparing UCVM's CVM-S4.26(cvms5) with a set of ascii model files 
+(CVM4SI26_model) from enjui's directory on intensity(enjuilee/work).
+The ascii model file's grid points match Billy's grid points and 
+hence it is reasonable to assume that the latlons from the ascii 
+model files can be use to query against UCVM's CVM-S4.26.
+</p>
+<p>
+ Billy's VS and VP are result of averaging neighboring gridpoints
+(25 grid points to both sides of the target grid point = 2501 total grids
+ points including the target grid point)
+</p>
+<h4>
+Extraction steps:
+</h4>
+<p>
+     Retrieve target latlons from Billy's target list
+     Calculate grid points used to calculate the average 
+     Use grid points to extract VS/VP and latlons from the ascii model files
+     Create model VS csv, model VP csv output files
+     Collect up a list of latlons and use them to extract VS/VP from UCVM
+     Create UCVM VS csv, UCVM VP csv output files
+</p>
+<p>
+     In addition, a set of VS and VP output files are made with target latlons without averaging with its neighboring latlons
+</p>
+<h4>
+ Profile closeness plots:
+</h4>
+<p>
+     Data points are calculated with 2 sets of data points from comparing profile plots
+</p>
+
+<p>
+     Closeness equation used with VStarget and VSbase,
+<pre>
+              abs(VStarget - VSbase) 
+              ---------------------  * 100
+                  VSbase
+</pre>
+</p>
+<h4>
+  Profile datas:
+</h4>
+<p>
+<pre>
+      BILLY-25, target latlon with 2501 neighboring grid points
+                supplied by BILLY
+      MODEL-25, target latlon with 2501 neighboring grid points 
+                from the ascii model data files
+      UCVM-25,  target latlon with 2501 neighboring grid points 
+                from UCVM ucvm_query
+      MODEL-0,  target latlon from the ascii model data files 
+      UCVM-0,   target latlon from UCVM ucvm_query
+</pre>
+</p>
+<h4>
+  Closeness profile datas: 
+</h4>
+<p>
+<pre>
+      UCVM-25 & MODEL-25,  target is UCVM-25, base is MODEL-25 
+      BILLY-25 & MODEL-25, target is BILLY-25, base is MODEL-25
+      UCVM-25 & BILLY-25,  target is UCVM-25, base is BILLY-25
+</pre>
+</p>
+         </div>
+
+        </div>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+    </div> <!--Content-->
+  </div>
+</div> <!--Modal: Name-->
+
+</body>
+</html>
